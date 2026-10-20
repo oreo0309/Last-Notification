@@ -35,8 +35,14 @@ Si a las **3:12 a. m.** sigues despierto, llega la última notificación.
 - **Visual Studio Code** con la extensión **Extension Pack for Java** (`vscjava.vscode-java-pack`). VS Code la recomienda automáticamente al abrir la carpeta.
 - Audífonos (opcional, pero el sonido es la mitad del miedo).
 
+### Descargar el proyecto
+```bash
+git clone https://github.com/oreo0309/Last-Notification.git
+cd Last-Notification
+```
+
 ### En VS Code
-1. `Archivo → Abrir carpeta…` y elige la carpeta `UltimaNotificacion`.
+1. `Archivo → Abrir carpeta…` y elige la carpeta del proyecto (`Last-Notification`).
 2. Espera a que la extensión de Java termine de cargar el proyecto (abajo a la izquierda).
 3. Ve a **Ejecutar y depurar** (`Ctrl+Shift+D`), elige **"Jugar: Última Notificación"** y pulsa **F5**.
 4. Para correr las pruebas, elige **"Pruebas (estructuras de datos y lógica)"**.
@@ -296,7 +302,7 @@ Las pruebas (`test/pruebas`) verifican cada estructura y la lógica del juego: *
 ## Estructura del proyecto
 
 ```
-UltimaNotificacion/
+Last-Notification/
 ├── src/
 │   ├── estructuras/        Lista, Cola, Pila, ColaPrioridad, TablaHash, Grafo, ABB
 │   └── juego/
