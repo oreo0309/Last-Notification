@@ -69,7 +69,6 @@ public final class PantallaFeed extends Pantalla implements InterfazTelefono.Oye
     private double pulsoGlitch;
     private boolean primeraApertura = true;
     private boolean noMolestarPremiado;
-    private double tiempoEnNoche;
 
     private double susto = -1;
     private boolean sustoSuave;
@@ -140,7 +139,6 @@ public final class PantallaFeed extends Pantalla implements InterfazTelefono.Oye
     @Override
     public void actualizar(double dt) {
         tiempo += dt;
-        tiempoEnNoche += dt;
         if (susto >= 0) {
             actualizarSusto(dt);
             return;

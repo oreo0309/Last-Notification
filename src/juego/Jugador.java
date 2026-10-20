@@ -12,6 +12,7 @@ public class Jugador {
     private final IndicadorBienestar bienestar = new IndicadorBienestar();
     private final Telefono telefono = new Telefono();
     private final ListaEnlazada<Decision> historial = new ListaEnlazada<>();
+    private final ListaEnlazada<Logro> logros = new ListaEnlazada<>();
     private final double[] horasDormidas = new double[3];
 
     private double x;
@@ -55,6 +56,18 @@ public class Jugador {
         bienestar.modificar(IndicadorBienestar.CONCENTRACION, horas >= 6 ? 12 : (horas >= 4 ? 2 : -10));
     }
 
+    public boolean agregarLogro(Logro logro) {
+        if (logros.contiene(logro)) {
+            return false;
+        }
+        logros.agregar(logro);
+        return true;
+    }
+
+    public ListaEnlazada<Logro> logros() {
+        return logros;
+    }
+
     public void registrarPublicacionVista() {
         publicacionesVistas++;
     }
@@ -90,6 +103,7 @@ public class Jugador {
 
     public void reiniciarPartida() {
         historial.limpiar();
+        logros.limpiar();
         bienestar.restaurar(new IndicadorBienestar());
         for (int i = 0; i < horasDormidas.length; i++) {
             horasDormidas[i] = 0;

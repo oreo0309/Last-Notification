@@ -2,31 +2,35 @@ package estructuras;
 
 public class Grafo {
 
-    private final ListaEnlazada<Integer>[] adyacencia;
+    private final Object[] adyacencia;
     private int aristas;
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public Grafo(int vertices) {
-        adyacencia = (ListaEnlazada<Integer>[]) new ListaEnlazada[vertices];
+        adyacencia = new Object[vertices];
         for (int i = 0; i < vertices; i++) {
-            adyacencia[i] = new ListaEnlazada<>();
+            adyacencia[i] = new ListaEnlazada<Integer>();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private ListaEnlazada<Integer> lista(int vertice) {
+        return (ListaEnlazada<Integer>) adyacencia[vertice];
     }
 
     public void agregarArista(int a, int b) {
         validar(a);
         validar(b);
-        if (a == b || adyacencia[a].contiene(b)) {
+        if (a == b || lista(a).contiene(b)) {
             return;
         }
-        adyacencia[a].agregar(b);
-        adyacencia[b].agregar(a);
+        lista(a).agregar(b);
+        lista(b).agregar(a);
         aristas++;
     }
 
     public ListaEnlazada<Integer> vecinos(int vertice) {
         validar(vertice);
-        return adyacencia[vertice];
+        return lista(vertice);
     }
 
     public int[] distancias(int origen) {
@@ -38,7 +42,7 @@ public class Grafo {
         pendientes.encolar(origen);
         while (!pendientes.estaVacia()) {
             int actual = pendientes.desencolar();
-            for (int vecino : adyacencia[actual]) {
+            for (int vecino : lista(actual)) {
                 if (distancia[vecino] < 0) {
                     distancia[vecino] = distancia[actual] + 1;
                     pendientes.encolar(vecino);
@@ -62,7 +66,7 @@ public class Grafo {
             if (actual == destino) {
                 break;
             }
-            for (int vecino : adyacencia[actual]) {
+            for (int vecino : lista(actual)) {
                 if (previo[vecino] == -2) {
                     previo[vecino] = actual;
                     pendientes.encolar(vecino);

@@ -12,6 +12,7 @@ import juego.Decision;
 import juego.IndicadorBienestar;
 import juego.Juego;
 import juego.Jugador;
+import juego.Logro;
 import juego.TipoFinal;
 import juego.interfaz.Dibujo;
 import juego.interfaz.Estilo;
@@ -115,6 +116,7 @@ public class PantallaResultados extends Pantalla {
         Dibujo.parrafo(g, tipoFinal.relato(), 72, 112, 700, 1.2f);
         Jugador j = juego.jugador();
         IndicadorBienestar b = j.bienestar();
+        dibujarLogros(g, j);
         Dibujo.panel(g, 70, 200, 420, 210, 16);
         g.setFont(Estilo.fuente(Font.BOLD, 15));
         g.setColor(Estilo.acento());
@@ -216,6 +218,31 @@ public class PantallaResultados extends Pantalla {
             x += w + 14;
             i++;
         }
+    }
+
+    private void dibujarLogros(Graphics2D g, Jugador j) {
+        Logro[] todos = Logro.values();
+        int x = 860;
+        int y = 40;
+        Dibujo.panel(g, x, y, 350, 140, 16);
+        g.setFont(Estilo.fuente(Font.BOLD, 15));
+        g.setColor(Estilo.advertencia());
+        g.drawString("LOGROS  " + j.logros().tamano() + " / " + todos.length, x + 20, y + 28);
+        for (int i = 0; i < todos.length; i++) {
+            double cx = x + 34 + i * 35.5;
+            double cy = y + 66;
+            if (j.logros().contiene(todos[i])) {
+                Medalla.dibujar(g, cx, cy, 15, (float) Math.min(1, Math.max(0, (tiempo - 1.0 - i * 0.12) * 3)));
+            } else {
+                g.setColor(new Color(255, 255, 255, 40));
+                g.fill(new java.awt.geom.Ellipse2D.Double(cx - 15, cy - 15, 30, 30));
+            }
+        }
+        g.setFont(Estilo.fuente(Font.PLAIN, 12));
+        g.setColor(Estilo.textoSuave());
+        String ultimo = j.logros().estaVacia() ? "Gana logros con hábitos saludables." : "Último: " + j.logros().ultimo().nombre();
+        g.drawString(ultimo, x + 20, y + 110);
+        g.drawString("Cada logro suma 25 puntos.", x + 20, y + 127);
     }
 
     private static String recortar(Graphics2D g, String t, int ancho) {

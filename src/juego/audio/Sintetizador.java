@@ -52,6 +52,8 @@ public final class Sintetizador {
         s.poner("menu_mover", tono(660, 0.06, 0.25));
         s.poner("menu_elegir", tono(880, 0.12, 0.3));
         s.poner("error", error());
+        s.poner("nivel", nivelSuperado());
+        s.poner("logro", logro());
         return s;
     }
 
@@ -633,6 +635,44 @@ public final class Sintetizador {
             b[i] = (float) (v * amp + pajaro);
         }
         normalizar(b, 0.4f);
+        return b;
+    }
+
+    private float[] nivelSuperado() {
+        float[] b = buffer(2.6);
+        double[] notas = {392.0, 523.25, 659.25, 783.99, 1046.5};
+        for (int i = 0; i < b.length; i++) {
+            double t = (double) i / FRECUENCIA;
+            double v = 0;
+            for (int k = 0; k < notas.length; k++) {
+                double tt = t - k * 0.11;
+                if (tt < 0) {
+                    continue;
+                }
+                double caida = k == notas.length - 1 ? 0.9 : 0.35;
+                v += (Math.sin(DOS_PI * notas[k] * t) + 0.3 * Math.sin(DOS_PI * notas[k] * 2 * t)) * env(tt, 0.01, caida) * 0.35;
+            }
+            double acorde = (Math.sin(DOS_PI * 261.63 * t) + Math.sin(DOS_PI * 329.63 * t) + Math.sin(DOS_PI * 392.0 * t))
+                    * env(t - 0.5, 0.25, 0.9) * 0.18;
+            double brillo = Math.sin(DOS_PI * 2093 * t) * env(t - 0.55, 0.005, 0.25) * 0.15 * (0.6 + 0.4 * Math.sin(t * 40));
+            b[i] = (float) (v + acorde + brillo);
+        }
+        normalizar(b, 0.5f);
+        return b;
+    }
+
+    private float[] logro() {
+        float[] b = buffer(0.8);
+        double[] notas = {1318.5, 1760.0, 2093.0};
+        for (int i = 0; i < b.length; i++) {
+            double t = (double) i / FRECUENCIA;
+            double v = 0;
+            for (int k = 0; k < notas.length; k++) {
+                v += Math.sin(DOS_PI * notas[k] * t) * env(t - k * 0.06, 0.003, 0.18);
+            }
+            b[i] = (float) v;
+        }
+        normalizar(b, 0.35f);
         return b;
     }
 

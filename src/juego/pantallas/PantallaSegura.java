@@ -38,7 +38,6 @@ public class PantallaSegura extends Pantalla {
     private double tiempoTentacion;
     private boolean figura;
     private double terminando = -1;
-    private double tiempoCorrecto;
     private double tensionInicial;
     private String mensaje;
 
@@ -111,7 +110,6 @@ public class PantallaSegura extends Pantalla {
         boolean correcto = espacio == inhalar;
         if (correcto) {
             calmaReal += dt * 4.4;
-            tiempoCorrecto += dt;
             acumuladoAnsiedad += dt;
             if (acumuladoAnsiedad >= 2.5) {
                 acumuladoAnsiedad = 0;

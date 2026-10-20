@@ -4,6 +4,7 @@ import juego.ConfiguracionAccesibilidad;
 import juego.Decision;
 import juego.IndicadorBienestar;
 import juego.Jugador;
+import juego.Logro;
 import juego.Mision;
 import juego.Noche;
 import juego.TipoDecision;
@@ -12,6 +13,7 @@ import juego.feed.EventoTerror;
 import juego.feed.Feed;
 import juego.feed.Notificacion;
 import juego.feed.Publicacion;
+import estructuras.ListaEnlazada;
 import juego.pantallas.PantallaNombre;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,6 +29,7 @@ public final class PruebasLogica {
         decisiones();
         feedYFabricas();
         eventos();
+        logros();
         noches();
         entradas();
         configuracion();
@@ -114,6 +117,22 @@ public final class PruebasLogica {
         Prueba.igual("la versión suave cambia el susto", EventoTerror.JUMPSCARE_SUAVE, suave.tipo());
         Prueba.verdadero("la versión suave es menos intensa", suave.intensidad() < susto.intensidad());
         Prueba.igual("presencia suave se vuelve susurro", EventoTerror.SUSURRO, new EventoTerror(EventoTerror.PRESENCIA, 4).versionSuave().tipo());
+    }
+
+    private static void logros() {
+        Prueba.grupo("Logros (recompensas)");
+        ListaEnlazada<Decision> buenas = new ListaEnlazada<>();
+        buenas.agregar(new Decision(TipoDecision.REPORTAR, "Reportar"));
+        buenas.agregar(new Decision(TipoDecision.RESPONDER_CALMA, "Responder con calma"));
+        ListaEnlazada<Logro> l = Logro.evaluarNoche(buenas, 23 * 60 + 20, 3, 0, true, 20);
+        Prueba.verdadero("noche ejemplar desbloquea los 9 logros", l.tamano() == Logro.values().length);
+        ListaEnlazada<Decision> malas = new ListaEnlazada<>();
+        malas.agregar(new Decision(TipoDecision.COMPARARSE, "Compararte"));
+        ListaEnlazada<Logro> pocos = Logro.evaluarNoche(malas, 1440 + 150, 25, 2, false, 80);
+        Prueba.igual("noche de malos hábitos no da logros", 0, pocos.tamano());
+        Jugador j = new Jugador("Ana");
+        Prueba.verdadero("un logro nuevo se registra", j.agregarLogro(Logro.MODO_NOCHE));
+        Prueba.verdadero("un logro repetido no se duplica", !j.agregarLogro(Logro.MODO_NOCHE));
     }
 
     private static void noches() {

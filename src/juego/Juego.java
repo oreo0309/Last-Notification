@@ -68,6 +68,10 @@ public class Juego {
     private int erroresRecientes;
     private double ventanaErrores;
     private int ultimoPuntaje;
+    private int historialInicioNoche;
+    private int vistasInicioNoche;
+    private int atrapadasInicioNoche;
+    private final ListaEnlazada<Logro> logrosNoche = new ListaEnlazada<>();
     private boolean mostrarFps;
     private int cuadros;
     private int fps;
@@ -303,6 +307,9 @@ public class Juego {
         }
         banderas.claves().forEach(banderas::eliminar);
         respaldoNoche = jugador.bienestar().copia();
+        historialInicioNoche = jugador.historial().tamano();
+        vistasInicioNoche = jugador.publicacionesVistas();
+        atrapadasInicioNoche = jugador.vecesAtrapado();
         jugador.horaActual(noche.horaInicio());
         jugador.posicionar(3.3, 3.6, -0.75);
         jugador.telefono().reiniciar(noche.bateriaInicial());
@@ -323,6 +330,7 @@ public class Juego {
 
     public void terminarNoche(int minutoDormir) {
         IndicadorBienestar antes = jugador.bienestar().copia();
+        evaluarLogros(minutoDormir, antes.ansiedad());
         jugador.descansar(minutoDormir, nocheActual);
         if (nocheActual >= Noche.TOTAL) {
             finalizarPartida(jugador.bienestar().bienestarGeneral() >= 50 ? TipoFinal.DESCONECTADO : TipoFinal.AL_LIMITE);
@@ -341,10 +349,28 @@ public class Juego {
                     .append(delta == 0 ? "" : (delta > 0 ? "  (+" + delta + ")" : "  (" + delta + ")"))
                     .append("\n");
         }
-        cuerpo.append("\n").append(horas >= 7 ? "Dormir 7 horas o más te deja con energía para el día siguiente."
-                : (horas >= 5 ? "Dormiste, pero no lo suficiente. Los adolescentes necesitan entre 8 y 10 horas."
-                : "Dormiste muy poco. El cansancio acumulado aumenta la ansiedad y baja la concentración."));
-        cambiarPantalla(new PantallaTransicion(this, "AMANECE", noche.dia() + " · 06:30", cuerpo.toString(), this::iniciarNoche));
+        cuerpo.append("\n").append(horas >= 7 ? "¡Excelente! Dormir 7 horas o más te deja con energía para el día siguiente."
+                : (horas >= 5 ? "¡Lo lograste! Dormiste, aunque no lo suficiente: los adolescentes necesitan entre 8 y 10 horas."
+                : "Sobreviviste a la noche, pero dormiste muy poco. El cansancio aumenta la ansiedad y baja la concentración."));
+        cambiarPantalla(new PantallaTransicion(this, "NOCHE " + nocheActual + " SUPERADA", noche.dia() + " · 06:30 · Amanece",
+                cuerpo.toString(), logrosNoche, this::iniciarNoche));
+    }
+
+    private void evaluarLogros(int minutoDormir, int ansiedadFinal) {
+        ListaEnlazada<Decision> decisionesNoche = new ListaEnlazada<>();
+        int i = 0;
+        for (Decision d : jugador.historial()) {
+            if (i++ >= historialInicioNoche) {
+                decisionesNoche.agregar(d);
+            }
+        }
+        boolean noMolestar = jugador.telefono().noMolestar() || bandera("no_molestar");
+        logrosNoche.limpiar();
+        for (Logro l : Logro.evaluarNoche(decisionesNoche, minutoDormir, jugador.publicacionesVistas() - vistasInicioNoche,
+                jugador.vecesAtrapado() - atrapadasInicioNoche, noMolestar, ansiedadFinal)) {
+            logrosNoche.agregar(l);
+            jugador.agregarLogro(l);
+        }
     }
 
     public void fallarNoche() {
@@ -377,6 +403,7 @@ public class Juego {
                 - jugador.decisionesDaninas() * 10
                 - jugador.vecesAtrapado() * 40
                 + (int) Math.round(horas * 25)
+                + jugador.logros().tamano() * 25
                 + (tipoFinal == TipoFinal.DESCONECTADO ? 300 : tipoFinal == TipoFinal.AL_LIMITE ? 120 : 0);
         return Math.max(0, puntaje);
     }

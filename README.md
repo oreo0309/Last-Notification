@@ -24,6 +24,7 @@ Si a las **3:12 a. m.** sigues despierto, llega la última notificación.
 | ![El Seguidor en el pasillo](docs/capturas/06_pasillo_seguidor.jpg) | ![Susto](docs/capturas/07_susto.jpg) |
 | ![Respirar para dormir](docs/capturas/08_respirar_para_dormir.jpg) | ![Noche 3: apagón](docs/capturas/09_noche3_apagon.jpg) |
 | ![Las 3:12](docs/capturas/10_las_3_12.jpg) | ![Final](docs/capturas/11_final_desconectado.jpg) |
+| ![Noche superada y logros](docs/capturas/14_noche_superada_logros.jpg) | ![Alto contraste](docs/capturas/12_alto_contraste.jpg) |
 
 ---
 
@@ -46,7 +47,7 @@ También puedes usar `Terminal → Ejecutar tarea…` → **Jugar**, **Compilar*
 ```bat
 :: Windows
 ejecutar.bat      :: compila y abre el juego
-probar.bat        :: compila y corre las 93 pruebas
+probar.bat        :: compila y corre las 97 pruebas
 ```
 ```bash
 # Linux / macOS
@@ -81,9 +82,29 @@ probar.bat        :: compila y corre las 93 pruebas
 - **La tensión** sale de tu bienestar, de cuántas publicaciones llevas seguidas y de la hora. Al subir, el feed se corrompe, aparecen publicaciones que no deberían existir (como una foto tuya tomada desde atrás), las luces parpadean, se escuchan pasos y susurros…
 - **El Seguidor**: si lo miras, no se mueve. Mientras miras el teléfono, no lo estás mirando a él. La linterna lo hace retroceder. Las buenas decisiones bajan la tensión y lo alejan. Si te alcanza, pierdes tiempo y bienestar.
 - **Dormir**: deja el teléfono en el escritorio, acuéstate y respira al ritmo del círculo hasta llenar la barra de calma.
+- **Logros**: al terminar cada noche ganas medallas por hábitos saludables (*Desconexión a tiempo*, *Sueño reparador*, *Guardián del feed*, *Buena compañía*, *Ojos propios*, *Freno al scroll*, *Modo noche*, *Fuera de su alcance*, *Mente en calma*), con sonido de "noche superada". Cada logro suma puntos para los récords.
 - **Cuatro finales**: *Desconectado*, *Al límite*, *Ahora eres contenido* y *La última notificación* (3:12 a. m.). La pantalla de resultados muestra tu bienestar, tus números de la noche, tus mejores y peores decisiones y un mensaje para reflexionar.
 
 ---
+
+## Cumplimiento del documento del proyecto (POO 2026-30)
+
+| Requisito del documento | Cómo lo cumple el juego |
+|---|---|
+| Lenguaje Java o Python | Java 17+, sin motores ni librerías externas |
+| Juego de creación propia, orientado al usuario (población objetivo) | Historia y mecánicas propias; dirigido a adolescentes de 12 a 17 años (y a docentes o familias) |
+| Objetivo y mecánica definidos | Sobrevivir 3 noches cumpliendo objetivos y dormir antes de las 3:12 a. m.; 1 jugador; puntaje, logros y récords |
+| Enfoque en el uso saludable de redes **sin preguntas explícitas** | Se aprende con decisiones y consecuencias dentro de una red social simulada (no hay cuestionarios) |
+| a. Componente **aleatorio** y componentes que dependen de la **habilidad** | Aleatorio: publicaciones, notificaciones, eventos de terror, apariciones y momentos de cada susto. Habilidad: esquivar al Seguidor (mirarlo, linterna, rutas), administrar tiempo y batería, respirar al ritmo para dormir, tomar buenas decisiones |
+| b. Componente **inclusivo** | Subtítulos de todos los sonidos importantes (limitación auditiva), sonido posicional, alto contraste, filtros para daltonismo, reducción de sustos y destellos, volumen, brillo y sensibilidad configurables |
+| c. Mínimo **7 clases propias** y **2 patrones** (no Singleton/Prototype/Module) + **SOLID** | 73 clases, interfaces y enumeraciones propias; patrones **State** y **Factory Method** (además, el teléfono avisa a la partida mediante una interfaz oyente, al estilo Observer); ver sección SOLID |
+| d. Todo se muestra de forma **gráfica** | Ventana gráfica 3D + interfaz del teléfono, HUD, menús y resultados |
+| Usabilidad i. Herramienta de **ayuda** | `PantallaAyuda` (F1 o desde el menú): objetivo, controles, bienestar, El Seguidor, consejos, créditos |
+| Usabilidad ii. **Mensajes de ayuda** dentro del juego | Pistas de cada objetivo, indicaciones de teclas en contexto, mensajes de orientación tras cada decisión |
+| Usabilidad iii. Elementos **motivadores** | Sonidos y efectos al decidir bien, "Objetivo cumplido", pantalla de **noche superada** con música, **logros con medallas**, puntaje y récords, mensajes motivadores |
+| Usabilidad iv. **Prueba con 5 usuarios** | Formulario listo en `docs/formulario_usabilidad.md` (la aplica el equipo) |
+| Confiabilidad: sin errores, retos bien diseñados, **entradas erradas** | Probado de principio a fin sin errores; validación de nombre, archivos dañados ignorados, errores registrados en `datos/errores.log` sin cerrar el juego |
+| Rúbrica: **sin errores ni advertencias de compilación** | Compila sin advertencias con `javac -Xlint:all` |
 
 ## Requerimientos funcionales del informe
 
@@ -234,6 +255,14 @@ classDiagram
 - **State** — `Pantalla` es el estado abstracto (`entrar()`, `actualizar()`, `salir()`, `dibujar()`) y `Juego.pantallaActual` es el contexto. Estados: `PantallaMenu`, `PantallaNombre`, `PantallaTransicion`, `PantallaFeed` (partida activa), `PantallaSegura` (descanso), `PantallaPausa`, `PantallaAyuda`, `PantallaConfiguracion`, `PantallaRecords`, `PantallaResultados`. Los estados superpuestos (pausa, ayuda, descanso) se guardan en una **pila** propia (`apilarPantalla` / `desapilarPantalla`).
 - **Factory Method** — `FabricaContenido.crear()` es el método fábrica; `FabricaPublicacion`, `FabricaNotificacion` y `FabricaEventoTerror` deciden qué `ElementoFeed` concreto crear según la noche y la tensión. `Feed` trabaja solo con el tipo abstracto.
 
+### Buenas prácticas (SOLID)
+
+- **S — Responsabilidad única**: cada clase hace una cosa: `Renderizador3D` dibuja, `Iluminacion` calcula luz, `GestorAudio` mezcla sonido, `InterfazTelefono` dibuja el teléfono, `Hud` dibuja la información, `DirectorTerror` decide los sustos, `ElSeguidor` controla a la entidad.
+- **O — Abierto/cerrado**: se agregan publicaciones, notificaciones o pantallas nuevas creando clases o plantillas, sin modificar `Feed` ni `Juego`.
+- **L — Sustitución de Liskov**: cualquier `Pantalla` funciona como estado de `Juego`, y cualquier `ElementoFeed` (publicación, mensaje o evento) se muestra y se decide de la misma forma.
+- **I — Segregación de interfaces**: interfaces pequeñas y específicas: `ElementoFeed`, `MapaRender` (lo único que el renderizador necesita del mapa) e `InterfazTelefono.Oyente`.
+- **D — Inversión de dependencias**: `Renderizador3D` depende de la abstracción `MapaRender` (no de `Casa`) y `Feed` depende de `FabricaContenido` (no de las fábricas concretas).
+
 ---
 
 ## Estructuras de datos (implementadas desde cero)
@@ -250,7 +279,7 @@ Todo el juego usa estas estructuras propias del paquete `estructuras` (no se usa
 | `Grafo` | Listas de adyacencia + **BFS** (distancias y camino más corto) | Mapa de la casa: El Seguidor te persigue con el camino más corto; puntos de aparición ocultos |
 | `ArbolBinarioBusqueda<K,V>` | ABB con recorridos en orden e inverso (con pila) | Récords ordenados por puntaje; mejores y peores decisiones en los resultados |
 
-Las pruebas (`test/pruebas`) verifican cada estructura y la lógica del juego: **93 pruebas**.
+Las pruebas (`test/pruebas`) verifican cada estructura y la lógica del juego: **97 pruebas**.
 
 ---
 
@@ -284,6 +313,12 @@ UltimaNotificacion/
 ├── compilar / ejecutar / probar (.bat y .sh)
 └── datos/                  (se crea al jugar: configuración, récords y registro de errores)
 ```
+
+---
+
+## Uso de herramientas de inteligencia artificial
+
+El documento del proyecto pide declarar el uso de IA. En este proyecto se usó **Claude (Anthropic)** como asistente para generar y depurar el código Java, probar el juego de forma automatizada, generar el diagrama de clases y redactar esta documentación, a partir del concepto, los requerimientos y el diagrama UML definidos por el equipo. El equipo debe describirlo así en la sección de Metodología del informe técnico.
 
 ---
 
