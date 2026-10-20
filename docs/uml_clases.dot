@@ -1,0 +1,114 @@
+digraph UML {
+    graph [rankdir=TB, splines=ortho, nodesep=0.45, ranksep=0.7, fontname="Helvetica", bgcolor="white", pad=0.3];
+    node [shape=plain, fontname="Helvetica", fontsize=10];
+    edge [fontname="Helvetica", fontsize=9, color="#444444", arrowsize=0.8];
+
+    Juego [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#6C8EBF">
+      <tr><td bgcolor="#DAE8FC"><b>Juego</b></td></tr>
+      <tr><td align="left" balign="left">- semana: int<br/>- nocheActual: int<br/>- pantallaActual: Pantalla<br/>- pilaPantallas: Pila&lt;Pantalla&gt;<br/>- banderas: TablaHash&lt;String,Boolean&gt;</td></tr>
+      <tr><td align="left" balign="left">+ iniciarNoche()<br/>+ terminarNoche(minuto)<br/>+ cambiarPantalla(p)<br/>+ apilarPantalla(p) / desapilarPantalla()</td></tr></table>>];
+
+    GestorAudio [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#D6B656">
+      <tr><td bgcolor="#FFF2CC"><b>GestorAudio</b></td></tr>
+      <tr><td align="left" balign="left">- volumen: float<br/>- silenciado: bool</td></tr>
+      <tr><td align="left" balign="left">+ reproducir(clave)<br/>+ reproducirEn(clave, x, y)<br/>+ subirTension(nivel)</td></tr></table>>];
+
+    Config [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#D6B656">
+      <tr><td bgcolor="#FFF2CC"><b>ConfiguracionAccesibilidad</b></td></tr>
+      <tr><td align="left" balign="left">- altoContraste: bool<br/>- sinJumpscares: bool<br/>- subtitulos: bool<br/>- filtroColor: int</td></tr>
+      <tr><td align="left" balign="left">+ aplicar(juego)<br/>+ guardar(archivo) / cargar(archivo)</td></tr></table>>];
+
+    Pantalla [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#9673A6">
+      <tr><td bgcolor="#E1D5E7"><i><b>Pantalla</b></i></td></tr>
+      <tr><td align="left" balign="left"># nombre: String</td></tr>
+      <tr><td align="left" balign="left"><i>+ entrar()</i><br/><i>+ actualizar(dt)</i><br/><i>+ salir()</i><br/><i>+ dibujar(g)</i></td></tr></table>>];
+
+    PMenu [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#9673A6"><tr><td bgcolor="#E1D5E7"><b>PantallaMenu</b></td></tr><tr><td align="left">- opciones: int</td></tr></table>>];
+    PFeed [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#9673A6"><tr><td bgcolor="#E1D5E7"><b>PantallaFeed</b></td></tr><tr><td align="left">- tension: int</td></tr></table>>];
+    PSegura [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#9673A6"><tr><td bgcolor="#E1D5E7"><b>PantallaSegura</b></td></tr><tr><td align="left">- calma: int</td></tr></table>>];
+    POtras [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#9673A6"><tr><td bgcolor="#E1D5E7"><b>Otras pantallas</b></td></tr><tr><td align="left" balign="left">PantallaNombre · PantallaTransicion<br/>PantallaPausa · PantallaAyuda<br/>PantallaConfiguracion · PantallaRecords<br/>PantallaResultados</td></tr></table>>];
+
+    Mision [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#82B366">
+      <tr><td bgcolor="#D5E8D4"><b>Mision</b></td></tr>
+      <tr><td align="left" balign="left">- objetivo: String<br/>- cumplida: bool</td></tr>
+      <tr><td align="left">+ evaluar(juego): bool</td></tr></table>>];
+
+    Jugador [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#82B366">
+      <tr><td bgcolor="#D5E8D4"><b>Jugador</b></td></tr>
+      <tr><td align="left" balign="left">- nombre: String<br/>- horaActual: int<br/>- historial: ListaEnlazada&lt;Decision&gt;</td></tr>
+      <tr><td align="left" balign="left">+ decidir(decision)<br/>+ descansar(minuto, noche)</td></tr></table>>];
+
+    Decision [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#82B366">
+      <tr><td bgcolor="#D5E8D4"><b>Decision</b></td></tr>
+      <tr><td align="left" balign="left">- tipo: TipoDecision<br/>- efectos: TablaHash&lt;String,Integer&gt;</td></tr>
+      <tr><td align="left" balign="left">+ aplicarEfecto(indicador)<br/>+ impacto(): int</td></tr></table>>];
+
+    Indicador [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#82B366">
+      <tr><td bgcolor="#D5E8D4"><b>IndicadorBienestar</b></td></tr>
+      <tr><td align="left" balign="left">- sueno: int<br/>- autoestima: int<br/>- ansiedad: int<br/>- concentracion: int<br/>- relaciones: int</td></tr>
+      <tr><td align="left" balign="left">+ modificar(delta)<br/>+ enRiesgo(): bool</td></tr></table>>];
+
+    Feed [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#B85450">
+      <tr><td bgcolor="#F8CECC"><b>Feed</b></td></tr>
+      <tr><td align="left" balign="left">- elementos: ListaEnlazada&lt;ElementoFeed&gt;<br/>- nivelScroll: int<br/>- pendientes: ColaPrioridad&lt;Notificacion&gt;</td></tr>
+      <tr><td align="left" balign="left">+ generarContenido(n)<br/>+ hacerScroll(dir)</td></tr></table>>];
+
+    Elemento [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#B85450">
+      <tr><td bgcolor="#F8CECC">«interface»<br/><b>ElementoFeed</b></td></tr>
+      <tr><td align="left">+ mostrar(g, x, y, ancho, ctx)</td></tr></table>>];
+
+    Publicacion [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#B85450">
+      <tr><td bgcolor="#F8CECC"><b>Publicacion</b></td></tr>
+      <tr><td align="left" balign="left">- texto: String<br/>- tipo: TipoPost<br/>- impactoAnsiedad: int</td></tr>
+      <tr><td align="left">+ mostrar()</td></tr></table>>];
+
+    Notificacion [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#B85450">
+      <tr><td bgcolor="#F8CECC"><b>Notificacion</b></td></tr>
+      <tr><td align="left" balign="left">- mensaje: String<br/>- urgencia: int<br/>- silenciable: bool</td></tr>
+      <tr><td align="left">+ mostrar()</td></tr></table>>];
+
+    Evento [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#B85450">
+      <tr><td bgcolor="#F8CECC"><b>EventoTerror</b></td></tr>
+      <tr><td align="left" balign="left">- intensidad: int<br/>- tipo: String</td></tr>
+      <tr><td align="left" balign="left">+ mostrar()<br/>+ versionSuave()</td></tr></table>>];
+
+    Fabrica [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#D79B00">
+      <tr><td bgcolor="#FFE6CC"><i><b>FabricaContenido</b></i></td></tr>
+      <tr><td align="left"><i>+ crear(): ElementoFeed</i></td></tr></table>>];
+    FPub [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#D79B00"><tr><td bgcolor="#FFE6CC"><b>FabricaPublicacion</b></td></tr><tr><td align="left">+ crear(): ElementoFeed</td></tr></table>>];
+    FNot [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#D79B00"><tr><td bgcolor="#FFE6CC"><b>FabricaNotificacion</b></td></tr><tr><td align="left">+ crear(): ElementoFeed</td></tr></table>>];
+    FEve [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="4" color="#D79B00"><tr><td bgcolor="#FFE6CC"><b>FabricaEventoTerror</b></td></tr><tr><td align="left">+ crear(): ElementoFeed</td></tr></table>>];
+
+    Juego -> GestorAudio [arrowhead=vee];
+    Juego -> Config [arrowhead=vee];
+    Juego -> Pantalla [arrowhead=vee, xlabel="pantallaActual"];
+    Juego -> Mision [arrowhead=vee, xlabel="0..*"];
+    Juego -> Jugador [arrowtail=diamond, dir=back, xlabel="1"];
+    Juego -> Feed [arrowtail=diamond, dir=back, xlabel="1"];
+    Mision -> Jugador [arrowhead=vee, xlabel="asignada a"];
+    Jugador -> Indicador [arrowtail=diamond, dir=back];
+    Decision -> Indicador [arrowhead=vee, xlabel="modifica"];
+    Publicacion -> Decision [arrowhead=vee, xlabel="ofrece"];
+    Feed -> Elemento [arrowtail=diamond, dir=back, xlabel="0..*"];
+    Publicacion -> Elemento [arrowhead=onormal, style=dashed];
+    Notificacion -> Elemento [arrowhead=onormal, style=dashed];
+    Evento -> Elemento [arrowhead=onormal, style=dashed];
+    Notificacion -> Evento [arrowhead=vee, xlabel="dispara"];
+    FPub -> Fabrica [arrowhead=onormal];
+    FNot -> Fabrica [arrowhead=onormal];
+    FEve -> Fabrica [arrowhead=onormal];
+    FPub -> Publicacion [arrowhead=vee, style=dashed, xlabel="«crea»"];
+    FNot -> Notificacion [arrowhead=vee, style=dashed, xlabel="«crea»"];
+    FEve -> Evento [arrowhead=vee, style=dashed, xlabel="«crea»"];
+    Feed -> Fabrica [arrowhead=vee, xlabel="usa"];
+    PMenu -> Pantalla [arrowhead=onormal];
+    PFeed -> Pantalla [arrowhead=onormal];
+    PSegura -> Pantalla [arrowhead=onormal];
+    POtras -> Pantalla [arrowhead=onormal];
+
+    { rank=same; GestorAudio; Juego; Config; }
+    { rank=same; Pantalla; Mision; Jugador; Feed; }
+    { rank=same; PMenu; PFeed; PSegura; POtras; Decision; Elemento; }
+    { rank=same; Indicador; Publicacion; Notificacion; Evento; }
+    { rank=same; FPub; FNot; FEve; }
+}

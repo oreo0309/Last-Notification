@@ -1,0 +1,37 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compilar",
+            "type": "shell",
+            "command": "./compilar.sh",
+            "windows": {
+                "command": ".\\compilar.bat"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Jugar",
+            "type": "shell",
+            "command": "./ejecutar.sh",
+            "windows": {
+                "command": ".\\ejecutar.bat"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Pruebas",
+            "type": "shell",
+            "command": "./probar.sh",
+            "windows": {
+                "command": ".\\probar.bat"
+            },
+            "group": "test",
+            "problemMatcher": []
+        }
+    ]
+}

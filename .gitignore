@@ -1,0 +1,6 @@
+bin/
+datos/
+*.class
+fuentes.txt
+.DS_Store
+Thumbs.db

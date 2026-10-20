@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Jugar: Última Notificación",
+            "request": "launch",
+            "mainClass": "juego.Principal",
+            "cwd": "${workspaceFolder}",
+            "vmArgs": "-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8",
+            "console": "internalConsole"
+        },
+        {
+            "type": "java",
+            "name": "Pruebas (estructuras de datos y lógica)",
+            "request": "launch",
+            "mainClass": "pruebas.EjecutarPruebas",
+            "cwd": "${workspaceFolder}",
+            "vmArgs": "-Djava.awt.headless=true -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8",
+            "console": "integratedTerminal"
+        }
+    ]
+}
